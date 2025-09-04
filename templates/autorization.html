@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Семейный Бюджет</title>
+    <link rel="stylesheet" href="static/auth.css">
+    <title>Авторизация</title>
+</head>
+<body>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="container">
+    <form class="login" action="" method="POST">
+        <label for="login">Логин</label>
+        <input type="password" class="dataError" name="login" id="login">
+        <label for="password">Пароль</label>
+        <input type="password" class="dataError" name="password" id="password">
+        <button type="submit" name='LoginButton' value="LOGIN">Войти</button>
+        <button type="submit" name='RegisterButton' type="button" value="REGISTER">Зарегистрироваться</button>
+        <span>{{ messages[0] }}</span>
+    </form>
+</div>
+{% else %}
+<div class="container">
+    <form class="login" action="" method="POST">
+        <label for="login">Логин</label>
+        <input type="text" name="login" id="login">
+        <label for="password">Пароль</label>
+        <input type="password" name="password" id="password">
+        <button type="submit" name='LoginButton' value="LOGIN">Войти</button>
+        <button type="submit" name='RegisterButton' type="button" value="REGISTER">Зарегистрироваться</button>
+        {% endif %}
+        {% endwith %}
+    </form>
+</div>
+</body>
+</html>
