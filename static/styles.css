@@ -1,0 +1,148 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+.auth{
+    display: flex;
+    align-items: center;
+}
+.loginform{
+    margin-left:auto;
+}
+#LOGINBUTTON{
+    margin: 0 10px;
+    margin-right: auto;
+    background-color: #003bcf;
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    transition: .2s linear;
+    cursor: pointer;
+}
+#LOGINBUTTON:hover{
+ box-shadow: 0 0 0 2px white;
+}
+header {
+    background-color: #0050cf;
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+}
+.name{
+    height:0px;
+}
+.list{
+    display:flex;
+    justify-content:center;
+}
+nav ul{
+   padding:0px;
+}
+nav ul li {
+    display: inline;
+    margin:10px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+main {
+    padding: 1rem;
+}
+
+.base{
+    margin-left:0px;
+    display:flex;
+    justify-content: space-evenly;
+}
+
+.income {
+    background-color: white;
+    width: 30%; /* Ширина секции */
+    height: 300px; /* Высота секции */
+}
+.expenses {
+    background-color: white;
+    width: 30%; /* Ширина секции */
+    height: 300px; /* Высота секции */
+}
+.income, .expenses{
+    width: fit-content;
+    height: fit-content;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom:10px;
+}
+@media (max-width: 525px) {
+    .username {
+        display: none;
+    }
+    .income, .expenses{
+        width:92%;
+        background-color: white;
+        padding: 1rem;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-bottom:10px;
+    }
+    .base{
+        display:flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+}
+button {
+    background-color: #003bcf;
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom:5px;
+}
+
+button:hover {
+    background-color: #0050cf;
+}
+label{
+    display: block;
+    margin: 0.5rem 0 0.25rem;
+}
+input[type="number"], input[type="text"] {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.reportDiv{
+    display:flex;
+    flex-direction: column;
+}
+select{
+    width:100px;
+}
+#dia1, #dia2, .reports, .settings{
+    height:fit-content;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom:10px;
+}
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    position: static;
+    bottom: 0;
+    width: 100%;
+}
