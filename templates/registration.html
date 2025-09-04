@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Семейный Бюджет</title>
+    <link rel="stylesheet" href="static/reg.css">
+    <title>Регистрация</title>
+</head>
+<body>
+<div class="container">
+    <form action="" method="POST">
+        <label for="name">Укажите Ваше Имя</label> <br>
+        <input type="text" name="name" id="name" required> <br>
+        <label for="lastname">Укажите Вашу Фамилию</label> <br>
+        <input type="text" name="lastname" id="lastname" required> <br>
+        <label for="login">Укажите Вашу почту или номер телефона</label> <br>
+        <input type="text" name="login" id="login" required> <br>
+        <label for="password">Создайте свой пароль</label> <br>
+        <input type="password" name="password" id="password" required> <br>
+        <button type="submit">Зарегистрироваться</button>
+        <a href = "/autorization">Вход в аккаунт</a>
+        <br>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <span>{{ messages[0] }}</span>
+        {% endif %}
+        {% endwith %}
+    </form>
+</div>
+</body>
+</html>

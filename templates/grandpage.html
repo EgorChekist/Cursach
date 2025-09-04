@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Семейный Бюджет</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<header>
+    <div class="name">
+        <h2>Семейный Бюджет</h2>
+    </div>
+    <div class="auth">
+        {% if current_user.is_authenticated %}
+        <div class="loginform">
+            <span class='username'>Добро пожаловать, {{ current_user.username }}</span>
+            <a href="/logout">
+                <button type='submit' id="LOGINBUTTON">Выход</button>
+            </a>
+        </div>
+        {% else %}
+        <div class="loginform">
+            <form action="" method="POST">
+                <button name='LoginButton' type="submit" value="LOGIN" id="LOGINBUTTON">Вход</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    <div class="list">
+        <nav class="navlist">
+            <ul>
+                <li><a href="#income">Доходы</a></li>
+                <li><a href="#expenses">Расходы</a></li>
+                <li><a href="#reports">Отчеты</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main>
+    <div class="base">
+        <div class="income-and-expense">
+            <section class="income">
+                <h2>Доходы</h2>
+                <form id="updateIncome" action="" class="incomeform" method="POST">
+                    <label for="income-amount">Сумма:</label>
+                    <input type="number" id="income-amount" name="income-amount" required>
+                    <label for="income-source">Выберите источник дохода:</label>
+                    <select id="income-source" name="income-source" required>
+                        <option value="">Выберите</option>
+                        <option value="Зарплата">Зарплата</option>
+                        <option value="Фриланс">Фриланс</option>
+                        <option value="Инвестиции">Инвестиции</option>
+                    </select>
+                    <button id="updateButton" type="submit" style="margin-top: 16px;">Добавить доход</button>
+                </form>
+            </section>
+            <section class="expenses">
+                <h2>Расходы</h2>
+                <form id="updateExpense" action="" class="expensesform" method="POST">
+                    <label for="expense-amount">Сумма:</label>
+                    <input type="number" id="expense-amount" name="expense-amount" required>
+                    <label for="expense-category">Выберите категори:</label>
+                    <select id="expense-category" name="expense-category" required>
+                        <option value="">Выберите</option>
+                        <option value="Продукты">Продукты</option>
+                        <option value="Одежда">Одежда</option>
+                        <option value="Транспорт">Транспорт</option>
+                        <option value="Развлечения">Развлечения</option>
+                        <option value="Стройматериалы">Стройматериалы</option>
+                        <option value="Мебель">Мебель</option>
+                        <option value="Рестораны и кафе">Рестораны и кафе</option>
+                        <option value="Салоны красоты и косметика">Салоны красоты и косметика</option>
+                        <option value="Лекарства">Лекарства</option>
+                        <option value="Аренда/Ипотека">Аренда/Ипотека</option>
+                        <option value="Коммунальные услуги">Коммунальные услуги</option>
+                        <option value="Налоги">Налоги</option>
+                        <option value="Внезапные расходы">Внезапные расходы</option>
+                    </select>
+                    <button id="updateButton" type="submit">Добавить расход</button>
+                </form>
+            </section>
+        </div>
+        <div class="diagrams">
+            <!--     Первая диаграмма-->
+            <section id="dia1">
+                <h2>Диаграмма доходов</h2>
+                <canvas id="chart1" width="400" height="200"></canvas>
+            </section>
+            <!-- Вторая диаграмма -->
+            <section id="dia2">
+                <h2>Диаграмма расходов</h2>
+                <canvas id="chart2" width="400" height="200"></canvas>
+            </section>
+        </div>
+        <section class="reports">
+            <h2>Отчеты</h2>
+            <p id="reportNameholder">Здесь будут отображаться ваши финансовые отчеты.</p>
+            <div class="reportDiv">
+                <span id="reportAllIncome" style="margin-bottom: 5px;"></span>
+                <span id="reportAllExpense" style="margin-bottom: 5px;"></span>
+                <span id="reportMostSpendCategories" style="margin-bottom: 5px;"></span>
+                <span class="reportText"></span>
+                <span class="reportText"></span>
+                <span class="reportText"></span>
+            </div>
+            <form id="datareset" action="" method="POST">
+                <button type="submit" name="datareset" value="datareset">Сброс данных диаграмм</button>
+            </form>
+            <form id="createReport" action="" method="POST">
+                <button type="submit" name="createReport" value="createReport">Создать отчёт</button>
+            </form>
+            <form id="addData" action="" method="POST">
+                <button type="submit" name="addData" value="addData">Загрузить данные в базу данных</button>
+            </form>
+            <form id="downloadData" action="" method="POST">
+                <button type="submit" name="downloadData" value="downloadDataValue">Скачать данные из базы данных
+                </button>
+            </form>
+            {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <br><span>{{ messages[0] }}</span>
+                    {% endif %}
+                    {% endwith %}
+        </section>
+    </div>
+    <script>
+        document.getElementById('updateIncome').addEventListener('submit', function(event) {
+             event.preventDefault();
+             var income_amount = document.getElementById("income-amount").value
+             var income_category = document.getElementById("income-source").value
+             console.log(income_amount);
+             console.log(income_category);
+             $.ajax({
+                      url: '/update',
+                      type: 'POST',
+                      contentType: 'application/json',
+                      data:{'income_category':income_category,'income_amount':income_amount},
+                      success: function(response) {
+                          const income = response['money_income'];
+                          const expense = response['money_expense'];
+                          console.log(typeof response);
+                          console.log(income);
+                          console.log(expense);
+                          chart1.data.datasets[0].data = response.money_income;
+                          chart2.data.datasets[0].data = response.money_expense;
+                          chart1.update();
+                          chart2.update();
+                          console.log("Обновляем диаграммы");
+                          let input = document.getElementById("income-amount");
+                          input.value = '';
+                          let select = document.getElementById("income-source");
+                          select.value = '';
+                      }
+              });
+         });
+         document.getElementById('updateExpense').addEventListener('submit', function(event) {
+             event.preventDefault();
+             var expense_amount = document.getElementById("expense-amount").value
+             var expense_category = document.getElementById("expense-category").value
+             $.ajax({
+                      url: '/update',
+                      type: 'POST',
+                      contentType: 'application/json',
+                      data:{'expense_category':expense_category,'expense_amount':expense_amount},
+                      success: function(response) {
+                          const income = response['money_income'];
+                          const expense = response['money_expense'];
+                          console.log(typeof response);
+                          console.log(income);
+                          console.log(expense);
+                          chart1.data.datasets[0].data = response.money_income;
+                          chart2.data.datasets[0].data = response.money_expense;
+                          chart1.update();
+                          chart2.update();
+                          console.log("Обновляем диаграммы");
+                          let input = document.getElementById("expense-amount");
+                          input.value = "";
+                          let select = document.getElementById("expense-category");
+                          select.value = "";
+                      }
+              });
+         });
+         document.getElementById('createReport').addEventListener('submit', function(event) {
+             event.preventDefault();
+             console.log("Создаём отчёт");
+             $.ajax({
+                      url: '/createReport',
+                      type: 'POST',
+                      contentType: 'application/json',
+                      success: function(response) {
+                          console.log("Получили всю инфу");
+                          document.getElementById("reportAllIncome").textContent = `Заработано: ${response["AllIncome"]}`;
+                          document.getElementById("reportAllExpense").textContent = `Потрачено: ${response["AllExpense"]} (${(response["AllExpense"] / response["AllIncome"] * 100).toFixed(2)}% от заработанных денег)`;
+                          var categories = ``;
+                          for(let  i = 0; i < response["MostSpendCategories"].length; i++){
+                             categories = categories + `${response["MostSpendCategories"][i]}, `
+                          }
+                          document.getElementById("reportMostSpendCategories").textContent = `Самые затратные категории: ${categories.slice(0, categories.length - 2)}`;
+                      }
+              });
+         });
+         // Первая диаграмм
+                         var ctx1 = document.getElementById('chart1').getContext('2d');
+                         var chart1 = new Chart(ctx1, {
+                             type: 'bar',
+                             data: {
+                                 labels: ['Зарплата', 'Фриланс', 'Инвестиции'],
+                                 datasets: [{
+                                     label: 'Заработок',
+                                     data: [],
+                                     backgroundColor: 'rgba(0,80,207, 0.2)',
+                                     borderColor: 'rgba(0, 80, 207, 1)',
+                                     borderWidth: 1
+                                 }]
+                             },
+                              options: {
+                                     plugins: {
+                                         legend: {
+                                             display: false
+                                         }
+                                     }
+                                 }
+                         });
+                         // Вторая диаграмма
+                         var ctx2 = document.getElementById('chart2').getContext('2d');
+                         var chart2 = new Chart(ctx2, {
+                             type: 'doughnut',
+                             data: {
+                                 labels: ['Продукты', 'Одежда', 'Транспорт','Развлечения','Стройматериалы','Мебель','Рестораны и кафе','Салоны красоты и косметика','Лекарства','Аренда/Ипотека','Коммунальные услуги','Налоги','Внезапные расходы'],
+                                 datasets: [{
+                                     data: [],
+                                     backgroundColor: [
+                                         'rgba(255, 99, 132, 0.5)',
+                                         'rgba(54, 162, 235, 0.5)',
+                                         'rgba(255, 206, 86, 0.5)',
+                                         'rgba(70, 110, 200, 0.5)',
+                                         'rgba(52, 160, 110, 0.5)',
+                                         'rgba(253, 106, 2, 0.5)',
+                                         'rgba(96, 22, 132, 0.5)',
+                                         'rgba(250, 40, 60, 0.5)',
+                                         'rgba(140, 250, 200, 0.5)',
+                                         'rgba(220, 0, 150, 0.5)',
+                                         'rgba(0, 150, 150, 0.5)',
+                                         'rgba(215, 96, 220, 0.5)',
+                                         'rgba(196, 123, 54, 0.5)'
+                                     ],
+                                     borderColor: [
+                                         'rgba(255, 99, 132, 0.5)',
+                                         'rgba(54, 162, 235, 0.5)',
+                                         'rgba(255, 206, 86, 0.5)',
+                                         'rgba(70, 110, 200, 0.5)',
+                                         'rgba(52, 160, 110, 0.5)',
+                                         'rgba(253, 106, 2, 0.5)',
+                                         'rgba(96, 22, 132, 0.5)',
+                                         'rgba(250, 40, 60, 0.5)',
+                                         'rgba(140, 250, 200, 0.5)',
+                                         'rgba(220, 0, 150, 0.5)',
+                                         'rgba(0, 150, 150, 0.5)',
+                                         'rgba(215, 96, 220, 0.5)',
+                                         'rgba(196, 123, 54, 0.5)'
+                                     ],
+                                     borderWidth: 1
+                                 }]
+                             }
+                         });
+         $(document).ready(function update() {
+              $.ajax({
+                      url: '/update',
+                      type: 'POST',
+                      contentType: 'application/json',
+                      success: function(response) {
+                          const income = response['money_income'];
+                          const expense = response['money_expense'];
+                          console.log(typeof response);
+                          console.log(income);
+                          console.log(expense);
+                          chart1.data.datasets[0].data = response.money_income;
+                          chart2.data.datasets[0].data = response.money_expense;
+                          chart1.update();
+                          chart2.update();
+                          console.log("Обновляем диаграммы");
+                      }
+              });
+          });
+    </script>
+</main>
+<footer>
+    <p>&copy; 2025 Семейный Бюджет. Все права защищены.</p>
+</footer>
+</body>
+</html>
